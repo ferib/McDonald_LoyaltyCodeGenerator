@@ -14,7 +14,12 @@ namespace ReverseCoffee
             Get("/", args =>
             {
                 Console.WriteLine($"new visitor: {Context.Request.UserHostAddress}");
-                return View["index.html", McDonald.Instance.GetPromoCode()];
+                PageData model = new PageData()
+                {
+                    code = McDonald.Instance.GetPromoCode(),
+                    currentPoints = McDonald.Instance.GetTotalPoints()
+                };
+                return View["index.html", model];
             });
         }
     }

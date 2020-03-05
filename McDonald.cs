@@ -15,7 +15,6 @@ namespace ReverseCoffee
     class McDonald
     {
         public RestClient HttpClient { get; set; }
-        public RestClient HttpClient2 { get; set; } //second one will be used so we can check points while spamming keys
         public static McDonald Instance { get; private set; }
         public DiscordWebhookHandler discord { get; set; }
 
@@ -75,8 +74,8 @@ namespace ReverseCoffee
 
             //NOTE: change the x-dif-authorization data & Date date, this data can be obtained from sniffing your phone
             request.AddHeader("x-dif-authorization", "Signature keyId=\"AeBu5A9CK03LUaREMNEP95l1JwAKE1Yd7AjToKQjwIcw\",headers=\"(request-target) host date authorization\",signature=\"MEYCIQDFmPoi6PGp6dNu5ER57jSCLIDS4Hd46DEVe/oy4VnjrQIhAJ3KfjB9qMdS2aOZf2+v9CHv9+cHW4p0NsuYhtaZ+yvr\"");
-            this.HttpClient2.ConfigureWebRequest(r => AddCustomDateHeader(r, "2020 -02-28T22:19:56Z"));
-            IRestResponse response = HttpClient2.Execute(request);
+            this.HttpClient.ConfigureWebRequest(r => AddCustomDateHeader(r, "2020-02-28T22:19:56Z"));
+            IRestResponse response = HttpClient.Execute(request);
             if (response.StatusCode != HttpStatusCode.OK)
                 return null;
             OfferPage[] pageReturn = JsonConvert.DeserializeObject<OfferPage[]>(response.Content);
@@ -94,12 +93,14 @@ namespace ReverseCoffee
         private void ConfigHeader(ref RestRequest request)
         {
             //moste off the headers are required!
+            //the main thing to do here is copy your authorization headers, the others should do the trick just fine
             request.AddHeader("authority", "dif.gmal.app");
             request.AddHeader("x-vmob-device_os_version", "12.4");
             request.AddHeader("x-vmob-location_accuracy", "65.0");
             request.AddHeader("x-vmob-device_network_type", "wifi");
             request.AddHeader("user-agent", "GMAL/4029 CFNetwork/978.0.7 Darwin/18.7.0");
             request.AddHeader("x-vmob-application_version", "4029");
+            request.AddHeader("x-vmob-uid", "1E427934-4707-4BD8-AEAE-708E254183CB");
             request.AddHeader("x-vmob-device_timezone_id", "Europe/Brussels");
             request.AddHeader("x-vmob-device_utc_offset", "+01:00");
             request.AddHeader("x-vmob-device_screen_resolution", "1125x2436");
@@ -122,5 +123,11 @@ namespace ReverseCoffee
     {
         public string expiryDate { get; set; }
         public int verificationToken { get; set; }
+    }
+
+    class PageData
+    {
+        public int code { get; set; }
+        public int currentPoints { get; set; }
     }
 }
