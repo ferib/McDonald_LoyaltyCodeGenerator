@@ -19,7 +19,9 @@ namespace ReverseCoffee
         public DiscordWebhookHandler discord { get; set; }
 
         private DateTime LastGeneratedCode { get; set; }
+        private DateTime LastPointsCheck { get; set; }
         private int LastCode { get; set; }
+        private int LastPoints { get; set; }
         private string discordUrl = ""; //TODO: set discord webhook url :p
 
         public McDonald()
@@ -66,10 +68,16 @@ namespace ReverseCoffee
 
         public int GetTotalPoints()
         {
-            var page = GetOfferPage();
-            if(page != null && page.instances.Count > 0)
-                return page.instances.FirstOrDefault().pointsBalance;
-            return -1;
+            if (this.LastPointsCheck.AddMinutes(7) < DateTime.UtcNow) //7min timeout due to new anti spam
+            {
+                this.LastPointsCheck = DateTime.UtcNow;
+                OfferPage page = null; //GetOfferPage(); //NOTE: To lazy to fix thise one atm..
+                if (page != null && page.instances.Count > 0)
+                    this.LastPoints = page.instances.FirstOrDefault().pointsBalance;
+                else
+                    this.LastPoints = -1;
+            }
+            return this.LastPoints;
         }
 
         public OfferPage GetOfferPage()
