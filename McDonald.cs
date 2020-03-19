@@ -130,18 +130,4 @@ namespace ReverseCoffee
             request.AddHeader("x-vmob-device", "iPhone");
         }
     }
-
-
-    //Model
-    class McDoCode
-    {
-        public string expiryDate { get; set; }
-        public int verificationToken { get; set; }
-    }
-
-    class PageData
-    {
-        public int code { get; set; }
-        public int currentPoints { get; set; }
-    }
 }
